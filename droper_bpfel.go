@@ -12,6 +12,13 @@ import (
 	"github.com/cilium/ebpf"
 )
 
+type droperDataT struct {
+	Protocol uint32
+	Port     uint32
+	Status   [5]int8
+	Padding  [3]int8
+}
+
 // loadDroper returns the embedded CollectionSpec for droper.
 func loadDroper() (*ebpf.CollectionSpec, error) {
 	reader := bytes.NewReader(_DroperBytes)
@@ -53,14 +60,14 @@ type droperSpecs struct {
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type droperProgramSpecs struct {
-	CountTcpPackets *ebpf.ProgramSpec `ebpf:"count_tcp_packets"`
+	DropTcpPackets *ebpf.ProgramSpec `ebpf:"drop_tcp_packets"`
 }
 
 // droperMapSpecs contains maps before they are loaded into the kernel.
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type droperMapSpecs struct {
-	TcpPktCountT *ebpf.MapSpec `ebpf:"tcp_pkt_count_t"`
+	TcpPktT *ebpf.MapSpec `ebpf:"tcp_pkt_t"`
 }
 
 // droperObjects contains all objects after they have been loaded into the kernel.
@@ -82,12 +89,12 @@ func (o *droperObjects) Close() error {
 //
 // It can be passed to loadDroperObjects or ebpf.CollectionSpec.LoadAndAssign.
 type droperMaps struct {
-	TcpPktCountT *ebpf.Map `ebpf:"tcp_pkt_count_t"`
+	TcpPktT *ebpf.Map `ebpf:"tcp_pkt_t"`
 }
 
 func (m *droperMaps) Close() error {
 	return _DroperClose(
-		m.TcpPktCountT,
+		m.TcpPktT,
 	)
 }
 
@@ -95,12 +102,12 @@ func (m *droperMaps) Close() error {
 //
 // It can be passed to loadDroperObjects or ebpf.CollectionSpec.LoadAndAssign.
 type droperPrograms struct {
-	CountTcpPackets *ebpf.Program `ebpf:"count_tcp_packets"`
+	DropTcpPackets *ebpf.Program `ebpf:"drop_tcp_packets"`
 }
 
 func (p *droperPrograms) Close() error {
 	return _DroperClose(
-		p.CountTcpPackets,
+		p.DropTcpPackets,
 	)
 }
 
