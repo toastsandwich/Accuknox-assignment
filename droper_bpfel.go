@@ -53,13 +53,14 @@ type droperSpecs struct {
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type droperProgramSpecs struct {
-	XdpDropTcpFunc *ebpf.ProgramSpec `ebpf:"xdp_drop_tcp_func"`
+	CountTcpPackets *ebpf.ProgramSpec `ebpf:"count_tcp_packets"`
 }
 
 // droperMapSpecs contains maps before they are loaded into the kernel.
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type droperMapSpecs struct {
+	TcpPktCountT *ebpf.MapSpec `ebpf:"tcp_pkt_count_t"`
 }
 
 // droperObjects contains all objects after they have been loaded into the kernel.
@@ -81,22 +82,25 @@ func (o *droperObjects) Close() error {
 //
 // It can be passed to loadDroperObjects or ebpf.CollectionSpec.LoadAndAssign.
 type droperMaps struct {
+	TcpPktCountT *ebpf.Map `ebpf:"tcp_pkt_count_t"`
 }
 
 func (m *droperMaps) Close() error {
-	return _DroperClose()
+	return _DroperClose(
+		m.TcpPktCountT,
+	)
 }
 
 // droperPrograms contains all programs after they have been loaded into the kernel.
 //
 // It can be passed to loadDroperObjects or ebpf.CollectionSpec.LoadAndAssign.
 type droperPrograms struct {
-	XdpDropTcpFunc *ebpf.Program `ebpf:"xdp_drop_tcp_func"`
+	CountTcpPackets *ebpf.Program `ebpf:"count_tcp_packets"`
 }
 
 func (p *droperPrograms) Close() error {
 	return _DroperClose(
-		p.XdpDropTcpFunc,
+		p.CountTcpPackets,
 	)
 }
 
