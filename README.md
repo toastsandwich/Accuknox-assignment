@@ -96,5 +96,15 @@ static __always_inline struct tcphdr* get_tcp_header(struct xdp_md *ctx) {
 
 # 🖥️ eBPF + Cilium in action
 ![output](https://github.com/toastsandwich/Accuknox-assignment/assets/83450905/18709718-e6b0-4958-bd9b-f22bfb105984)
-# 👤 Author
+- This program monitors port 4040 and skips rest of them.
+- If packet contains TCP protocol, the port is checked.
+  ```go
+    if port == 4040 {
+      drop
+    } else {
+      pass
+    }
+  ```
+  
+# 🧑‍🦱 Author
 [@toastsandwich](https://www.github.com/toastsandwich)
