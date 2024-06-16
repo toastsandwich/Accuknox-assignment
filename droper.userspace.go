@@ -11,14 +11,21 @@ import (
 	"github.com/cilium/ebpf/rlimit"
 )
 
+type Data_t struct {
+	Protocol uint32
+	Port     uint32
+	Status   [5]byte
+	Padding  [3]byte
+}
+
 func main() {
 	if err := rlimit.RemoveMemlock(); err != nil {
-		log.Fatal("removing memlock: ", err)
+		log.Fatal("removing mem lock: ", err)
 	}
 
 	var obj droperObjects
 	if err := loadDroperObjects(&obj, nil); err != nil {
-		log.Fatal("loading eBPF objects: ", err)
+		log.Fatal("loading object: ", err)
 	}
 	defer obj.Close()
 
@@ -29,13 +36,15 @@ func main() {
 	}
 
 	link, err := link.AttachXDP(link.XDPOptions{
-		Program:   obj.CountTcpPackets,
+		Program:   obj.DropTcpPackets,
 		Interface: iface.Index,
 	})
 	if err != nil {
-		log.Fatal("attaching xdp: ", err)
+		log.Fatal("linking XDP: ", err)
 	}
 	defer link.Close()
+
+	log.Println("looking for TCP packet(s)")
 
 	tick := time.Tick(time.Second)
 	stop := make(chan os.Signal, 5)
@@ -44,12 +53,24 @@ func main() {
 	for {
 		select {
 		case <-tick:
-			var count uint64
-			err := obj.TcpPktCountT.Lookup(uint32(0), &count)
+			var key uint32 = 0
+			var value Data_t
+			var proto string
+			err := obj.TcpPktT.Lookup(&key, &value)
 			if err != nil {
-				log.Fatal("map lookup: ", err)
+				log.Println("map lookup: ", err)
+				continue
 			}
-			log.Println("recieved tcp packets", count)
+			if value.Protocol == 6 {
+				proto = "TCP"
+			} else {
+				proto = "Other than TCP"
+			}
+			if value.Port == 4040 {
+				log.Printf("TCP packet caught: Protocol=%s, Port=%d, Status=%s\n", proto, value.Port, string(value.Status[:]))
+			} else {
+				log.Printf("TCP packet passed: Protocol=%s, Port=%d, Status=%s\n", proto, value.Port, string(value.Status[:]))
+			}
 		case <-stop:
 			log.Println("recieved stop signal, exiting...")
 			return
