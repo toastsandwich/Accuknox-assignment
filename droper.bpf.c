@@ -1,3 +1,5 @@
+//go:build ignore
+
 #include <linux/bpf.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_endian.h>
@@ -27,11 +29,14 @@ static __always_inline char lookup_protocol(struct xdp_md *ctx) {
     return protocol;
 }
 
-SEC("xdp_drop")
+SEC("xdp")
 int xdp_drop_tcp_func(struct xdp_md *ctx) {
     long protocol = lookup_protocol(ctx);
     if(protocol == __TCP) {
-        return XDP_DROP;
+        bpf_printk("i see you tcp, lets find this port");
+        // return XDP_DROP;
     }
     return XDP_PASS;
 }
+
+char LICENSE[] SEC("license") = "Dual BSD/GPL";
