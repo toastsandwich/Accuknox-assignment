@@ -1,4 +1,4 @@
-# 🚀 TCP Packet Dropper
+# 🚀 TCP Packet Dropper (using eBPF and Cilium)
 Welcome to the journey where I learned to write code to modify the kernel to our needs. This repository contains code that drops TCP packets incoming to port 4040 using the power of eBPF (extended Berkeley Packet Filtering). It does more than its name suggests 😉
 
 # 📋 Requirements
@@ -95,7 +95,7 @@ static __always_inline struct tcphdr* get_tcp_header(struct xdp_md *ctx) {
 - Packet Dropping: If the destination port is 4040, the packet is dropped; otherwise, it is allowed to pass through.
 
 # 🖥️ eBPF + Cilium in action
-[img](output.png)
+(output.png)
 
 # 👤 Author
 [@toastsandwich](https://www.github.com/toastsandwich)
