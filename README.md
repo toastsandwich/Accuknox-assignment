@@ -94,5 +94,8 @@ static __always_inline struct tcphdr* get_tcp_header(struct xdp_md *ctx) {
 - Header Extraction: The program extracts the Ethernet, IP, and TCP headers to inspect the packet's destination port.
 - Packet Dropping: If the destination port is 4040, the packet is dropped; otherwise, it is allowed to pass through.
 
+# 🖥️ eBPF + Cilium in action
+[img](output.png)
+
 # 👤 Author
 [@toastsandwich](https://www.github.com/toastsandwich)
