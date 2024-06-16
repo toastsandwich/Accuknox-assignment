@@ -2,9 +2,9 @@
 Welcome to the journey where I learned to write code to modify the kernel to our needs. This repository contains code that drops TCP packets incoming to port 4040 using the power of eBPF (extended Berkeley Packet Filtering). It does more than its name suggests 😉
 
 # 📋 Requirements
-🐧 A Linux-based operating system (bare-metal or VM)
-📦 Installed packages: llvm, clang, go, bpftools, make
-🌐 Basic networking knowledge
+- 🐧 A Linux-based operating system (bare-metal or VM)
+- 📦 Installed packages: ```llvm, clang, go, bpftools, make```
+- 🌐 Basic networking knowledge
 
 #🛠️ How to Run
 📂 Clone the repository:
