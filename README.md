@@ -95,7 +95,7 @@ static __always_inline struct tcphdr* get_tcp_header(struct xdp_md *ctx) {
 - Packet Dropping: If the destination port is 4040, the packet is dropped; otherwise, it is allowed to pass through.
 
 # 🖥️ eBPF + Cilium in action
-![output](https://github.com/toastsandwich/Accuknox-assignment/assets/83450905/18709718-e6b0-4958-bd9b-f22bfb105984)
+![output](https://github.com/toastsandwich/Accuknox-assignment/assets/83450905/cb4b455d-6437-4736-a1bf-997c2bc848af)
 - This program monitors port 4040 and skips rest of them.
 - If packet contains TCP protocol, the port is checked.
   ```go
