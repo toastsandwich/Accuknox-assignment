@@ -25,20 +25,16 @@ struct {
     __uint(max_entries, 1);
 } tcp_pkt_t SEC(".maps");
 
-
+// helper function to get TCP Header
 static __always_inline struct tcphdr* get_tcp_header(struct xdp_md *ctx) {
-    // Retrieve packet data and data_end pointer from context
     void *data = (void *)(long) ctx->data;
     void *data_end = (void *)(long) ctx->data_end;
 
-    // Ensure Ethernet header fits within packet boundaries
     if (data + sizeof(struct ethhdr) > data_end)
         return NULL;
 
-    // Extract Ethernet header
     struct ethhdr *eth = data;
 
-    // Check if Ethernet frame contains an IPv4 packet
     if (bpf_ntohs(eth->h_proto) == ETH_P_IP) {
         // Calculate the IP header start
         struct iphdr *iph = data + sizeof(struct ethhdr);
@@ -66,14 +62,16 @@ static __always_inline struct tcphdr* get_tcp_header(struct xdp_md *ctx) {
     return NULL;
 }
 
-
+// main function of XDP
 SEC("xdp")
 int drop_tcp_packets(struct xdp_md *ctx) {
-    __u32 key = 0;
+    __u32 key = 0; //key for map
     struct data_t *data = bpf_map_lookup_elem(&tcp_pkt_t, &key);
+    // if data not found pass
     if (!data) {
-        return XDP_PASS;
+        return XDP_PASS; 
     }
+    // get tcp header
     struct tcphdr *tcph = get_tcp_header(ctx);
     if (!tcph) {
         data->port = 0;
@@ -82,7 +80,7 @@ int drop_tcp_packets(struct xdp_md *ctx) {
         data->status[sizeof(data->status) - 1] = '\0'; 
         return XDP_PASS;
     }
-    
+    // check the port
     if (bpf_ntohs(tcph->dest) == 4040) {
         data->port = bpf_ntohs(tcph->dest);
         data->protocol = _TCP;
@@ -98,4 +96,5 @@ int drop_tcp_packets(struct xdp_md *ctx) {
     }
 }
 
+// license
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
