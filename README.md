@@ -94,7 +94,7 @@ static __always_inline struct tcphdr* get_tcp_header(struct xdp_md *ctx) {
 - Header Extraction: The program extracts the Ethernet, IP, and TCP headers to inspect the packet's destination port.
 - Packet Dropping: If the destination port is 4040, the packet is dropped; otherwise, it is allowed to pass through.
 
-  **note: for testing if packets are getting dropped or not I created a simple tcp server accepting requests at port 4040 and a client sending requests to 4040 [server repo](https://github.com/toastsandwich/test-server-Accuknox-Assignment).**
+  **note: for testing, if tcp packets are getting dropped or not I created a simple tcp server accepting requests at port 4040 and a client sending requests to 4040 [server repo](https://github.com/toastsandwich/test-server-Accuknox-Assignment).**
 
 # 🖥️ eBPF + Cilium in action
 ![output](https://github.com/toastsandwich/Accuknox-assignment/assets/83450905/cb4b455d-6437-4736-a1bf-997c2bc848af)
